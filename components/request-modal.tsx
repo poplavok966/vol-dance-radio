@@ -15,7 +15,8 @@ const RequestContext = createContext<RequestContextValue | null>(null)
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
 
-const BOT_TOKEN = '8873088730:AAH3Ea5UqHBy3xfU3DSSXJ_mwwS_m0c29pc'
+// Твій виправлений токен з великою літерою O
+const BOT_TOKEN = '8873088730:AAH3Ea5UqHBy3xfU3DSSXJ_mwwS_mOc29pc'
 const CHAT_ID = '8567720152'
 
 export function RequestProvider({ children }: { children: ReactNode }) {
@@ -56,7 +57,7 @@ export function RequestProvider({ children }: { children: ReactNode }) {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}))
-        console.error('Telegram Direct API Error:', errData)
+        console.error('Telegram API error:', errData)
         throw new Error('Telegram error')
       }
 
