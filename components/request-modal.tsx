@@ -15,9 +15,6 @@ const RequestContext = createContext<RequestContextValue | null>(null)
 
 type Status = 'idle' | 'sending' | 'sent' | 'error'
 
-const BOT_TOKEN = '8873088730:AAH3Ea5UqHBy3xfU3DSSXJ_mwwS_m0c29pc'
-const CHAT_ID = '8567720152'
-
 export function RequestProvider({ children }: { children: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false)
   const [name, setName] = useState('')
@@ -41,20 +38,18 @@ export function RequestProvider({ children }: { children: ReactNode }) {
   const send = async () => {
     if (!track.trim()) return
     setStatus('sending')
-
-    const message = `🎧 Нове замовлення в ефір!\n\n👤 Від кого: ${name.trim() || 'Анонім'}\n🎵 Трек: ${track.trim()}`
-
     try {
-      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      const res = await fetch('/api/request-track', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: message,
-        }),
+        body: JSON.stringify({ name, track }),
       })
 
-      if (!res.ok) throw new Error('failed')
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        console.error('Request track error:', res.status, errData)
+        throw new Error('failed')
+      }
 
       setStatus('sent')
       setName('')
