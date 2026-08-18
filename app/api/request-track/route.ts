@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
 
-// Токен бота з BotFather
+// Токен бота voldance_request_bot z BotFather
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8873088730:AAH3Ea5UqHBy3xfU3DSSXJ_mwwS_m0c29pc'
 
-// Твій особистий Telegram ID для отримання замовлень
+// Твій Telegram ID (щоб бот надсилав замовлення у твій діалог з ним)
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '8567720152'
 
 export async function POST(req: Request) {
@@ -14,7 +14,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Track is required' }, { status: 400 })
     }
 
-    // Форматування точно як на твоєму робочому скріншоті
     const message = `🎧 Нове замовлення в ефір!\n\n👤 Від кого: ${name || 'Анонім'}\n🎵 Трек: ${track}`
 
     const res = await fetch(
@@ -29,12 +28,16 @@ export async function POST(req: Request) {
       }
     )
 
+    const data = await res.json()
+
     if (!res.ok) {
-      return NextResponse.json({ error: 'Telegram API error' }, { status: 500 })
+      console.error('Telegram API error:', data)
+      return NextResponse.json({ error: data.description || 'Telegram API error' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
-  } catch {
+  } catch (err) {
+    console.error('Server error:', err)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }
