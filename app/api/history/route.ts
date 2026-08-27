@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server'
-import { sql } from '@/lib/db'
+import { getSql, hasDatabase } from '@/lib/db'
 
 // Server-side rolling history of tracks played on the Icecast stream. Because
 // Icecast only exposes the *current* title, we poll it here and accumulate the
 // timeline in Neon Postgres so every listener shares the same history and it
 // survives serverless cold starts / multiple instances. Entries older than
 // 7 days are pruned on each poll.
+//
+// If DATABASE_URL is not configured (e.g. during `pnpm run build` or a local
+// run without Neon), we gracefully fall back to an in-memory store so nothing
+// throws. In-memory data is per-instance and not durable — Neon is required
+// for shared, persistent history.
 
 export const dynamic = 'force-dynamic'
 
@@ -14,12 +19,21 @@ const DEFAULT_TITLE = 'VOL DANCE — On Air'
 const HISTORY_DAYS = 7
 const SEVEN_DAYS_MS = HISTORY_DAYS * 24 * 60 * 60 * 1000
 
-// Guarantee the tables exist even on a brand-new / reset database. This is
-// idempotent and cheap, and it prevents the history from silently breaking if
-// the schema was never provisioned (the root cause of history "disappearing").
+// ---------------------------------------------------------------------------
+// In-memory fallback store (used only when DATABASE_URL is missing)
+// ---------------------------------------------------------------------------
+type MemTrack = { title: string; played_at: number }
+const memHistory: MemTrack[] = []
+const memState = { last_title: '', last_poll: 0 }
+
+// ---------------------------------------------------------------------------
+// Schema bootstrap (DB only) — idempotent and cheap. Prevents history from
+// silently breaking if the schema was never provisioned.
+// ---------------------------------------------------------------------------
 let schemaReady = false
 async function ensureSchema() {
-  if (schemaReady) return
+  const sql = getSql()
+  if (!sql || schemaReady) return
   await sql`
     CREATE TABLE IF NOT EXISTS track_history (
       id BIGSERIAL PRIMARY KEY,
@@ -69,6 +83,23 @@ async function currentTitle(): Promise<string | null> {
 
 async function poll() {
   const now = Date.now()
+  const sql = getSql()
+
+  if (!sql) {
+    // In-memory fallback
+    if (now - memState.last_poll < 8000) return
+    memState.last_poll = now
+    const title = await currentTitle()
+    if (title && title !== memState.last_title) {
+      memState.last_title = title
+      memHistory.push({ title, played_at: now })
+    }
+    const cutoff = now - SEVEN_DAYS_MS
+    for (let i = memHistory.length - 1; i >= 0; i--) {
+      if (memHistory[i].played_at < cutoff) memHistory.splice(i, 1)
+    }
+    return
+  }
 
   // Read persisted poll state (throttle + last title) so it survives cold starts.
   const stateRows = (await sql`
@@ -94,6 +125,26 @@ async function poll() {
   // Prune anything older than 7 days.
   const cutoff = new Date(now - SEVEN_DAYS_MS).toISOString()
   await sql`DELETE FROM track_history WHERE played_at < ${cutoff}`
+}
+
+// Повертає треки за останні 7 днів (найновіші першими) з БД або пам'яті.
+async function fetchRecent(now: number): Promise<{ title: string; played_at: string }[]> {
+  const sql = getSql()
+  if (!sql) {
+    const cutoff = now - SEVEN_DAYS_MS
+    return memHistory
+      .filter((t) => t.played_at >= cutoff)
+      .sort((a, b) => b.played_at - a.played_at)
+      .map((t) => ({ title: t.title, played_at: new Date(t.played_at).toISOString() }))
+  }
+
+  const cutoff = new Date(now - SEVEN_DAYS_MS).toISOString()
+  return (await sql`
+    SELECT title, played_at
+    FROM track_history
+    WHERE played_at >= ${cutoff}
+    ORDER BY played_at DESC
+  `) as { title: string; played_at: string }[]
 }
 
 // Форматування дати ДД.ММ.РРРР за часовим поясом Europe/Kyiv
@@ -135,13 +186,7 @@ export async function GET() {
   })
 
   // Fetch the full 7-day window once, newest first, then group by local date.
-  const cutoff = new Date(now.getTime() - SEVEN_DAYS_MS).toISOString()
-  const rows = (await sql`
-    SELECT title, played_at
-    FROM track_history
-    WHERE played_at >= ${cutoff}
-    ORDER BY played_at DESC
-  `) as { title: string; played_at: string }[]
+  const rows = await fetchRecent(now.getTime())
 
   const entries = rows.map((r) => {
     const at = new Date(r.played_at)
@@ -155,5 +200,5 @@ export async function GET() {
       .map((e) => ({ title: e.title, time: e.time })),
   }))
 
-  return NextResponse.json({ days: grouped })
+  return NextResponse.json({ days: grouped, persistent: hasDatabase })
 }
