@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
-import { Clock, Radio, Send, Headphones, Zap, Gift } from 'lucide-react'
+import { Clock, Radio, Send, Headphones, Zap } from 'lucide-react'
 import { useResidentModal } from './resident-modal'
 
 type Weather = { temp: number; code: number }
@@ -112,18 +112,6 @@ export function SiteHeader() {
             <span>Замовлення</span>
           </a>
 
-          {/* Telegram giveaway plate — neon accent */}
-          <a
-            href="https://t.me/vol_dance_vol"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Розіграш у Telegram VOL DANCE"
-            className="vd-neon flex items-center gap-1.5 rounded-full border border-[#ffaa00] bg-[#ffaa00]/10 px-3 py-1 text-xs font-semibold text-brand-2"
-          >
-            <Gift className="size-3.5" />
-            <span>Розіграш</span>
-          </a>
-
           {/* Telegram channel */}
           <a
             href="https://t.me/vol_dance_vol"
@@ -135,11 +123,6 @@ export function SiteHeader() {
             <Send className="size-3.5 -translate-y-px" />
             <span className="hidden sm:inline">Telegram</span>
           </a>
-
-          <div className="flex items-center gap-1.5 rounded-full bg-gradient-to-r from-destructive to-brand px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-            <span className="vd-pulse size-1.5 rounded-full bg-white" />
-            On Air
-          </div>
         </div>
       </div>
     </header>

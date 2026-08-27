@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import useSWR from 'swr'
-import { History, Music, PlayCircle } from 'lucide-react'
+import { History, Music } from 'lucide-react'
 
 type Track = { title: string; time: string }
 type Day = { date: string; tracks: Track[] }
@@ -13,9 +13,34 @@ async function historyFetcher(url: string): Promise<HistoryResponse> {
   return res.json()
 }
 
-function youtubeSearchUrl(title: string) {
-  return `https://www.youtube.com/results?search_query=${encodeURIComponent(title)}`
-}
+const SEARCH_SERVICES = [
+  {
+    name: 'YouTube',
+    icon: '/brands/youtube.svg',
+    bg: 'bg-white/5 hover:bg-[#ff0033]/25 hover:ring-[#ff0033]/40',
+    url: (t: string) =>
+      `https://www.youtube.com/results?search_query=${encodeURIComponent(t)}`,
+  },
+  {
+    name: 'Spotify',
+    icon: '/brands/spotify.svg',
+    bg: 'bg-white/5 hover:bg-[#1db954]/25 hover:ring-[#1db954]/40',
+    url: (t: string) => `https://open.spotify.com/search/${encodeURIComponent(t)}`,
+  },
+  {
+    name: 'Apple Music',
+    icon: '/brands/apple-music.svg',
+    bg: 'bg-white/5 hover:bg-[#fa243c]/25 hover:ring-[#fa243c]/40',
+    url: (t: string) =>
+      `https://music.apple.com/us/search?term=${encodeURIComponent(t)}`,
+  },
+  {
+    name: 'SoundCloud',
+    icon: '/brands/soundcloud.svg',
+    bg: 'bg-white/5 hover:bg-[#ff5500]/25 hover:ring-[#ff5500]/40',
+    url: (t: string) => `https://soundcloud.com/search?q=${encodeURIComponent(t)}`,
+  },
+] as const
 
 export function RecentTracks() {
   const { data } = useSWR('/api/history', historyFetcher, {
@@ -100,16 +125,25 @@ export function RecentTracks() {
               <span className="shrink-0 text-xs font-semibold tabular-nums text-dim">
                 {item.time}
               </span>
-              <a
-                href={youtubeSearchUrl(item.title)}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`Знайти «${item.title}» на YouTube`}
-                title="Знайти на YouTube"
-                className="grid size-8 shrink-0 place-items-center rounded-lg bg-[#ff0033]/10 text-[#ff3355] transition-colors hover:bg-[#ff0033] hover:text-white"
-              >
-                <PlayCircle className="size-4" />
-              </a>
+              <div className="flex shrink-0 items-center gap-1">
+                {SEARCH_SERVICES.map((svc) => (
+                  <a
+                    key={svc.name}
+                    href={svc.url(item.title)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Знайти «${item.title}» на ${svc.name}`}
+                    title={`Знайти на ${svc.name}`}
+                    className={`grid size-7 place-items-center rounded-lg ring-1 ring-white/10 transition-colors ${svc.bg}`}
+                  >
+                    <img
+                      src={svc.icon || '/placeholder.svg'}
+                      alt=""
+                      className="size-4 object-contain"
+                    />
+                  </a>
+                ))}
+              </div>
             </li>
           ))}
         </ol>

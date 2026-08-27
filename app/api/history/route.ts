@@ -1,27 +1,23 @@
 import { NextResponse } from 'next/server'
+import {
+  addTrack,
+  getHistory,
+  getPollState,
+  pruneHistory,
+  setPollState,
+} from '@/lib/db'
 
 // Server-side rolling history of tracks played on the Icecast stream. Because
 // Icecast only exposes the *current* title, we poll it here and accumulate the
-// timeline on the server so every listener shares the same history (instead of
-// each browser keeping its own local list). Entries older than 3 days are
-// pruned. Note: this lives in memory and resets on a cold start; swap for a DB
-// or a persisted history.json if you need long-term durability.
+// timeline in Upstash Redis (Vercel KV) so every listener shares the same
+// history and it survives serverless cold starts / multiple instances. A
+// missing/broken Redis transparently falls back to an in-memory store (see
+// lib/db.ts). Entries older than 3 days are pruned on each poll.
+
+export const dynamic = 'force-dynamic'
 
 const STATUS_URL = 'https://globalic.stream:1185/status-json.xsl'
 const DEFAULT_TITLE = 'VOL DANCE — On Air'
-const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000
-
-type Entry = { title: string; at: number }
-
-// Persist across hot-reloads in dev by stashing on globalThis.
-const g = globalThis as unknown as {
-  __voldanceHistory?: Entry[]
-  __voldanceLastTitle?: string
-  __voldanceLastPoll?: number
-}
-g.__voldanceHistory ??= []
-g.__voldanceLastTitle ??= ''
-g.__voldanceLastPoll ??= 0
 
 async function currentTitle(): Promise<string | null> {
   try {
@@ -45,20 +41,23 @@ async function currentTitle(): Promise<string | null> {
 }
 
 async function poll() {
-  // Throttle to at most one upstream poll every 8s regardless of client count.
   const now = Date.now()
-  if (now - (g.__voldanceLastPoll ?? 0) < 8000) return
-  g.__voldanceLastPoll = now
+
+  // Read persisted poll state (throttle + last title) so it survives cold starts.
+  const { lastTitle, lastPoll } = await getPollState()
+
+  // Throttle to at most one upstream poll every 8s regardless of client count.
+  if (now - lastPoll < 8000) return
+  await setPollState({ lastPoll: now })
 
   const title = await currentTitle()
-  if (title && title !== g.__voldanceLastTitle) {
-    g.__voldanceLastTitle = title
-    g.__voldanceHistory!.unshift({ title, at: now })
+  if (title && title !== lastTitle) {
+    await setPollState({ lastTitle: title })
+    await addTrack(title, now)
   }
 
   // Prune anything older than 3 days.
-  const cutoff = now - THREE_DAYS_MS
-  g.__voldanceHistory = g.__voldanceHistory!.filter((e) => e.at >= cutoff)
+  await pruneHistory(now)
 }
 
 // Форматування дати ДД.ММ.РРРР за часовим поясом Europe/Kyiv
@@ -98,11 +97,19 @@ export async function GET() {
     return dateKey(d)
   })
 
+  // Fetch the full 3-day window once (newest first), then group by local date.
+  const rows = await getHistory(now.getTime())
+
+  const entries = rows.map((r) => {
+    const at = new Date(r.playedAt)
+    return { title: r.title, date: dateKey(at), time: timeLabel(at) }
+  })
+
   const grouped = days.map((date) => ({
     date,
-    tracks: g
-      .__voldanceHistory!.filter((e) => dateKey(new Date(e.at)) === date)
-      .map((e) => ({ title: e.title, time: timeLabel(new Date(e.at)) })),
+    tracks: entries
+      .filter((e) => e.date === date)
+      .map((e) => ({ title: e.title, time: e.time })),
   }))
 
   return NextResponse.json({ days: grouped })

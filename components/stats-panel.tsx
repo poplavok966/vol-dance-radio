@@ -1,11 +1,10 @@
 'use client'
 
-import { BarChart3, Music, Download } from 'lucide-react'
-import { useRadio, STREAM_URL } from './radio-provider'
+import { Music, Download, Radio } from 'lucide-react'
+import { STREAM_URL } from './radio-provider'
 import { useRequestModal } from './request-modal'
 
 export function StatsPanel() {
-  const { listeners, peak } = useRadio()
   const { open } = useRequestModal()
 
   const downloadM3u = () => {
@@ -20,45 +19,44 @@ export function StatsPanel() {
   }
 
   return (
-    <div className="rounded-3xl border border-border bg-card p-6">
-      <h2 className="mb-5 flex items-center gap-2 text-base font-extrabold uppercase tracking-wide">
-        <BarChart3 className="size-4 text-blue" />
-        Статистика ефіру
+    <div className="flex flex-col rounded-3xl border border-border bg-card p-6">
+      <h2 className="mb-1 flex items-center gap-2 text-base font-extrabold uppercase tracking-wide">
+        <Radio className="size-4 text-blue" />
+        Швидкі дії
       </h2>
+      <p className="mb-5 text-sm text-dim">
+        Замовляй улюблені треки в ефір або слухай нас у власному плеєрі.
+      </p>
 
-      <div className="mb-6 grid grid-cols-2 gap-4">
-        <div className="rounded-2xl bg-secondary/60 p-4 text-center">
-          <div className="text-3xl font-black tabular-nums text-blue">
-            {listeners}
-          </div>
-          <div className="mt-1 text-[11px] uppercase tracking-wide text-dim">
-            Слухачів зараз
-          </div>
-        </div>
-        <div className="rounded-2xl bg-secondary/60 p-4 text-center">
-          <div className="text-3xl font-black tabular-nums text-blue">
-            {peak}
-          </div>
-          <div className="mt-1 text-[11px] uppercase tracking-wide text-dim">
-            Пік слухачів
-          </div>
-        </div>
+      <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-2">
+        {/* Order tracks */}
+        <button
+          onClick={open}
+          className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-brand to-brand-2 px-4 py-6 text-center text-white shadow-[0_4px_15px_rgba(255,85,0,0.35)] transition-transform hover:scale-[1.02]"
+        >
+          <Music className="size-6" />
+          <span className="text-sm font-extrabold uppercase leading-tight">
+            Замовити трек
+          </span>
+          <span className="text-[11px] font-medium text-white/80">
+            Твоя музика в ефірі
+          </span>
+        </button>
+
+        {/* Download M3U */}
+        <button
+          onClick={downloadM3u}
+          className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-blue bg-blue/10 px-4 py-6 text-center text-blue transition-colors hover:bg-blue hover:text-accent-foreground"
+        >
+          <Download className="size-6" />
+          <span className="text-sm font-extrabold uppercase leading-tight">
+            .M3U плейлист
+          </span>
+          <span className="text-[11px] font-medium opacity-80">
+            Для сторонніх плеєрів
+          </span>
+        </button>
       </div>
-
-      <button
-        onClick={open}
-        className="mb-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-brand-2 px-4 py-3 text-sm font-extrabold uppercase text-white shadow-[0_4px_15px_rgba(255,85,0,0.35)] transition-transform hover:scale-[1.02]"
-      >
-        <Music className="size-4" />
-        Замовити трек в ефір
-      </button>
-      <button
-        onClick={downloadM3u}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-blue bg-blue/10 px-4 py-3 text-sm font-extrabold uppercase text-blue transition-colors hover:bg-blue hover:text-accent-foreground"
-      >
-        <Download className="size-4" />
-        Завантажити .M3U файл
-      </button>
     </div>
   )
 }
