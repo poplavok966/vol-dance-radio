@@ -3,7 +3,7 @@ import { RequestProvider } from '@/components/request-modal'
 import { ResidentProvider } from '@/components/resident-modal'
 import { SiteHeader } from '@/components/site-header'
 import { NowPlaying } from '@/components/now-playing'
-import { RecentTracks } from '@/components/recent-tracks'
+import { MyTunerPlaylist } from '@/components/mytuner-playlist'
 import { StatsPanel } from '@/components/stats-panel'
 import { ChatPanel } from '@/components/chat-panel'
 import { PlayerBar } from '@/components/player-bar'
@@ -22,7 +22,7 @@ export default function Page() {
 
             <main className="mx-auto w-full max-w-6xl flex-1 space-y-10 px-5 py-8 md:px-8 md:py-10">
               <NowPlaying />
-              <RecentTracks />
+              <MyTunerPlaylist />
               <div className="grid gap-6 lg:grid-cols-2">
                 <StatsPanel />
                 <ChatPanel />
