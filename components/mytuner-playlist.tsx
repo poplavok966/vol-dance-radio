@@ -97,6 +97,21 @@ export function MyTunerPlaylist() {
     }
   }, [visible])
 
+  // Автоматична прокрутка до останнього треку (в самий низ списку)
+  useEffect(() => {
+    if (!visible) return
+
+    const timer = setInterval(() => {
+      const container = document.getElementById(`${WIDGET_ID}playlist_songs`)
+      if (container && container.children.length > 0) {
+        container.scrollTop = container.scrollHeight
+        clearInterval(timer)
+      }
+    }, 400)
+
+    return () => clearInterval(timer)
+  }, [visible])
+
   return (
     <section className="rounded-3xl border border-border bg-card p-5 sm:p-6">
       <div className="mb-4 flex items-center gap-2">
