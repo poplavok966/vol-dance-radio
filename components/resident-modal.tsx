@@ -78,11 +78,8 @@ const RESIDENTS: Resident[] = [
     bio: 'Український Sound Producer та діджей, офіційний резидент VOL DANCE RADIO.',
     genres: ['Melodic Techno', 'Indie Dance', 'Trance'],
     links: [
-      {
-        type: 'spotify',
-        label: 'Spotify',
-        href: 'https://open.spotify.com/artist/0DY8fkAKJeynQzDvHC7bg3?si=BmxiWyGZQSWxGiVSQtydcQ',
-      },
+      { type: 'youtube', label: 'YouTube', href: 'https://www.youtube.com/@VerumVoid' },
+      { type: 'spotify', label: 'Spotify', href: 'https://open.spotify.com/artist/0DY8fkAKJeynQzDvHC7bg3?si=BmxiWyGZQSWxGiVSQtydcQ' },
       { type: 'instagram', label: 'Instagram', href: 'https://instagram.com/verum_void' },
       { type: 'telegram', label: 'Telegram', href: 'https://t.me/verum_void' },
       { type: 'facebook', label: 'Facebook', href: 'https://facebook.com/sergey.doroshchuk.7' },
@@ -110,7 +107,7 @@ const RESIDENTS: Resident[] = [
 
 function LinkButton({ link }: { link: Link }) {
   const base =
-    'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold text-white shadow-sm transition-transform hover:scale-[1.03]'
+    'flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold text-white transition-transform hover:scale-[1.03]'
   const styles: Record<Link['type'], string> = {
     telegram: 'bg-gradient-to-r from-[#2aabee] to-[#229ed9]',
     youtube: 'bg-[#ff0033]',
@@ -131,7 +128,6 @@ function LinkButton({ link }: { link: Link }) {
       <img
         src={`/brands/${link.type}.svg`}
         alt=""
-        aria-hidden="true"
         className="size-3.5 shrink-0 brightness-0 invert"
       />
       {link.label}

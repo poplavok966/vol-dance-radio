@@ -17,27 +17,27 @@ const SEARCH_SERVICES = [
   {
     name: 'YouTube',
     icon: '/brands/youtube.svg',
-    bg: 'bg-white/5 hover:bg-[#ff0033]/25 hover:ring-[#ff0033]/40',
+    bg: 'bg-white/5 hover:bg-[#ff0033]/25',
     url: (t: string) =>
       `https://www.youtube.com/results?search_query=${encodeURIComponent(t)}`,
   },
   {
     name: 'Spotify',
     icon: '/brands/spotify.svg',
-    bg: 'bg-white/5 hover:bg-[#1db954]/25 hover:ring-[#1db954]/40',
+    bg: 'bg-white/5 hover:bg-[#1db954]/25',
     url: (t: string) => `https://open.spotify.com/search/${encodeURIComponent(t)}`,
   },
   {
     name: 'Apple Music',
     icon: '/brands/apple-music.svg',
-    bg: 'bg-white/5 hover:bg-[#fa243c]/25 hover:ring-[#fa243c]/40',
+    bg: 'bg-white/5 hover:bg-[#fa243c]/25',
     url: (t: string) =>
       `https://music.apple.com/us/search?term=${encodeURIComponent(t)}`,
   },
   {
     name: 'SoundCloud',
     icon: '/brands/soundcloud.svg',
-    bg: 'bg-white/5 hover:bg-[#ff5500]/25 hover:ring-[#ff5500]/40',
+    bg: 'bg-white/5 hover:bg-[#ff5500]/25',
     url: (t: string) => `https://soundcloud.com/search?q=${encodeURIComponent(t)}`,
   },
 ] as const
@@ -72,18 +72,22 @@ export function RecentTracks() {
         <div className="flex items-center gap-2">
           <History className="size-4 text-blue" />
           <h2 className="text-[13px] font-bold uppercase tracking-[0.2em] text-dim">
-            Історія ефіру · останні 3 дні
+            Історія ефіру · останні 7 днів
           </h2>
         </div>
 
         {days.length > 0 && (
-          <div className="flex items-center gap-1.5">
-            {days.map((day) => {
+          <div className="flex flex-wrap items-center justify-end gap-1.5">
+            {days.map((day, i) => {
               const isActive = day.date === activeDate
+              // Newest-first: index 0 = today, 1 = yesterday, rest show DD.MM.
+              const label =
+                i === 0 ? 'Сьогодні' : i === 1 ? 'Вчора' : day.date.slice(0, 5)
               return (
                 <button
                   key={day.date}
                   onClick={() => setActiveDate(day.date)}
+                  title={day.date}
                   className={
                     'rounded-full border px-2.5 py-1 text-[11px] font-bold tabular-nums tracking-wide transition-colors ' +
                     (isActive
@@ -91,7 +95,7 @@ export function RecentTracks() {
                       : 'border-border bg-secondary/50 text-dim hover:text-foreground')
                   }
                 >
-                  {day.date.slice(0, 5)}
+                  {label}
                 </button>
               )
             })}
