@@ -1,0 +1,1 @@
+import{C as e}from"./ua-flag-BlxKWFSi.js";import{t}from"./site-footer-0uV6zQNk.js";var n=e();function r({children:e}){return(0,n.jsxs)(`div`,{className:`mx-auto w-full max-w-6xl px-4 py-8`,children:[e,(0,n.jsx)(t,{})]})}export{r as t};

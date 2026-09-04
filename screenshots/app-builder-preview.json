@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "VOL DANCE — Твоя танцювальна хвиля",
+      "hasCanvas": false,
+      "bodyTextLen": 2514,
+      "bodyTextHash": "467f4f3d51be859ee6cd2427f652b2e89c6dfb3be35a861de5ee375d313965d1",
+      "bodyTextPrefix": "VOL DANCE LIVE · 24/7 ЕФІР ІСТОРІЯ РЕЗИДЕНТИ ЧАТ Україна 22:44:5",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "VOL DANCE — Твоя танцювальна хвиля",
+      "hasCanvas": false,
+      "bodyTextLen": 2442,
+      "bodyTextHash": "260ece8d14ffbff12bd8f59035f805a70b09e346f2a9160a4c5efb828ef8b485",
+      "bodyTextPrefix": "VOL DANCE UA EN Замовлення Telegram LIVE-ПОТІК ГОТОВИЙ ТВОЯ ТАНЦ",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}

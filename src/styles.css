@@ -1,0 +1,279 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #0c0c10;
+  --color-foreground: #f4f1ec;
+  --color-card: #14141a;
+  --color-card-foreground: #f4f1ec;
+  --color-muted: #8c8994;
+  --color-muted-foreground: #8c8994;
+  --color-primary: #ff5500;
+  --color-primary-foreground: #ffffff;
+  --color-accent: #00d2ff;
+  --color-accent-foreground: #041016;
+  --color-secondary: #1c1c24;
+  --color-secondary-foreground: #f4f1ec;
+  --color-border: rgb(255 255 255 / 0.1);
+  --color-ring: #ff5500;
+  --color-destructive: #e11d48;
+  --color-amber: #ffaa00;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Oswald", "Manrope", ui-sans-serif, sans-serif;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  html.light {
+    color-scheme: light;
+    --color-background: #f4efe6;
+    --color-foreground: #1c1814;
+    --color-card: #fffcf7;
+    --color-card-foreground: #1c1814;
+    --color-muted: #6f6a64;
+    --color-muted-foreground: #6f6a64;
+    --color-secondary: #ebe4d8;
+    --color-secondary-foreground: #1c1814;
+    --color-border: rgb(28 24 20 / 0.12);
+    --color-accent: #0a7c94;
+    --color-accent-foreground: #f4efe6;
+    --color-destructive: #be123c;
+  }
+
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  * {
+    border-color: var(--color-border);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .vd-eq i,
+  .vd-vinyl,
+  .vd-pulse,
+  .vd-marquee {
+    animation: none !important;
+  }
+}
+
+.vd-page {
+  background:
+    radial-gradient(80rem 36rem at 8% -20%, rgb(255 85 0 / 0.14), transparent 55%),
+    radial-gradient(60rem 30rem at 100% 0%, rgb(0 210 255 / 0.08), transparent 50%),
+    var(--color-background);
+}
+
+html.light .vd-page {
+  background:
+    radial-gradient(80rem 36rem at 8% -20%, rgb(255 85 0 / 0.1), transparent 55%),
+    radial-gradient(60rem 30rem at 100% 0%, rgb(10 124 148 / 0.08), transparent 50%),
+    var(--color-background);
+}
+
+.vd-pulse {
+  animation: vd-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes vd-pulse {
+  50% {
+    opacity: 0.35;
+    transform: scale(0.72);
+  }
+}
+
+.vd-vinyl {
+  animation: vd-spin 8s linear infinite;
+}
+
+@keyframes vd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.vd-eq i {
+  width: 3px;
+  border-radius: 99px;
+  background: var(--color-accent);
+  height: 22%;
+}
+
+.vd-eq.on i {
+  animation: vd-eq 0.7s ease-in-out infinite alternate;
+}
+.vd-eq.on i:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.vd-eq.on i:nth-child(3) {
+  animation-delay: 0.28s;
+}
+.vd-eq.on i:nth-child(4) {
+  animation-delay: 0.06s;
+}
+.vd-eq.on i:nth-child(5) {
+  animation-delay: 0.2s;
+}
+.vd-eq.on i:nth-child(6) {
+  animation-delay: 0.34s;
+}
+.vd-eq.on i:nth-child(7) {
+  animation-delay: 0.16s;
+}
+
+@keyframes vd-eq {
+  from {
+    height: 18%;
+  }
+  to {
+    height: 100%;
+  }
+}
+
+.vd-marquee {
+  animation: vd-marquee 32s linear infinite;
+}
+
+@keyframes vd-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.vd-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 85 0 / 0.4) transparent;
+}
+
+.vd-hair {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 85 0 / 0.7),
+    rgb(0 210 255 / 0.55),
+    transparent
+  );
+}
+
+.vd-mytuner {
+  display: block;
+  width: 100%;
+  max-height: 480px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-card);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+.vd-mytuner * {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+.vd-mytuner-logo {
+  position: absolute;
+  right: 10px;
+  top: 16px;
+}
+.vd-mytuner-logo img {
+  height: 28px;
+  width: auto;
+}
+.vd-mytuner-station {
+  display: block;
+  height: 72px;
+  padding: 8px;
+  line-height: 56px;
+  overflow: hidden;
+  text-decoration: none;
+  background: var(--color-card);
+  position: relative;
+}
+.vd-mytuner-station img {
+  float: left;
+  height: 56px;
+  width: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.vd-mytuner-station span {
+  float: left;
+  margin-left: 12px;
+  max-width: calc(100% - 160px);
+  color: var(--color-foreground);
+  font-size: 18px;
+  font-weight: 700;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.vd-mytuner-days {
+  display: flex;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: var(--color-secondary);
+  border-top: 1px solid var(--color-border);
+  cursor: pointer;
+  user-select: none;
+}
+.vd-mytuner-days .dow {
+  flex: 1 1 0;
+  padding: 8px 2px;
+  color: var(--color-foreground);
+  font-size: 11px;
+  text-align: center;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.vd-mytuner-days .dow + .dow {
+  border-left: 1px solid var(--color-border);
+}
+.vd-mytuner-days .dow:hover {
+  background: rgb(255 85 0 / 0.18);
+}
+.vd-mytuner-days .dow.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+.vd-mytuner-songs {
+  width: 100%;
+  max-height: 340px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+  background: var(--color-card);
+  color: var(--color-foreground);
+}
+.vd-mytuner-songs li,
+.vd-mytuner-songs a,
+.vd-mytuner-songs span,
+.vd-mytuner-songs p,
+.vd-mytuner-songs div {
+  color: var(--color-foreground) !important;
+  border-color: var(--color-border) !important;
+}
+.vd-mytuner-songs li {
+  background: transparent !important;
+}

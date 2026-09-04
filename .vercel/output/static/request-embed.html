@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VOL DANCE requests</title>
+    <link
+      rel="stylesheet"
+      href="https://globalic.stream:1140/media/static/css/request_track_widget/request_widget.css"
+    />
+    <style>
+      html,
+      body {
+        margin: 0;
+        background: transparent;
+      }
+      body.dark {
+        background: #14141a;
+        color: #fff;
+      }
+      body.light {
+        background: #fffcf7;
+        color: #1c1814;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="host"></div>
+    <script>
+      (function () {
+        var q = new URLSearchParams(location.search);
+        var light = q.get("theme") === "light";
+        var en = q.get("lang") === "en";
+        document.documentElement.lang = en ? "en" : "uk";
+        document.body.className = light ? "light" : "dark";
+        var bg = light ? "#fffcf7" : "#14141a";
+        var fg = light ? "#1c1814" : "#ffffff";
+        var widgetLang = en ? "en" : "ru";
+        document.getElementById("host").innerHTML =
+          '<div class="sc-track-request-widget"><div is="track-request-widget" lang="' +
+          widgetLang +
+          '" api-base="https://globalic.stream:1140/api/v2" server-id="1" ip-timeout="0" track-timeout="0" bgcolor="' +
+          bg +
+          '" bgopacity="1" tracks_num="20" track_width="180" track_image_default="https://globalic.stream:1140/media/tracks/default_track_img.png" meta_font_size="14" meta_font_style="normal" meta_font_color="' +
+          fg +
+          '" meta_opacity="1" button_color="#FF5500" button_color_active="#00D2FF" button_font_color="#ffffff" button_font_size="14" ordering="1" allow_person_and_message="true" modal_background_color="' +
+          bg +
+          '" modal_font_color="' +
+          fg +
+          '" modal_background_opacity="0.95"></div></div>';
+        window.__vdLang = en ? "en" : "uk";
+      })();
+    </script>
+    <script src="https://globalic.stream:1140/media/static/js/request_track_widget/request_widget.js"></script>
+    <script>
+      (function () {
+        var UK = {
+          back: "Назад",
+          next: "Далі",
+          search: "Пошук",
+          request: "Замовити",
+          nothingFound: "Нічого не знайдено",
+          loadError: "Помилка завантаження треків",
+          requestTrack: "Замовити",
+          paginatePrev: "Назад",
+          paginateNext: "Далі",
+          trackrequestModalTitle: "Замовлення пісні",
+          trackrequestModalSubmit: "Надіслати",
+          trackrequestModalCancel: "Скасувати",
+          trackArtist: "Виконавець",
+          trackTitle: "Назва",
+          listenerName: "Ваше ім’я / нік",
+          listenerMessage: "Повідомлення в ефір",
+          charactersLeft: "Залишилося символів",
+          trackRequestSuccessfull: "Вашу заявку успішно надіслано!",
+          trackrequestModalClose: "Закрити",
+          trackRequestFailure: "Помилка, спробуйте пізніше.",
+          trackRequestBlocked: "Цей трек уже замовляли нещодавно, спробуйте пізніше.",
+          trackRequestBlockedIp: "Ви вже замовляли трек нещодавно, спробуйте пізніше.",
+        };
+        function patch() {
+          var nodes = document.querySelectorAll("*");
+          for (var i = 0; i < nodes.length; i++) {
+            var vm = nodes[i].__vue__;
+            if (vm && vm.translations) {
+              if (window.__vdLang === "uk") {
+                vm.translations.ru = UK;
+                vm.translations.uk = UK;
+                vm.language = "ru";
+                vm.lang = "ru";
+              } else {
+                vm.language = "en";
+                vm.lang = "en";
+              }
+              if (vm.$forceUpdate) vm.$forceUpdate();
+              return true;
+            }
+          }
+          return false;
+        }
+        var n = 0;
+        var id = setInterval(function () {
+          n += 1;
+          if (patch() || n > 40) clearInterval(id);
+        }, 200);
+        function report() {
+          if (!window.parent || window.parent === window) return;
+          var h = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+          window.parent.postMessage({ type: "vd-req-h", h: h }, "*");
+        }
+        report();
+        setInterval(report, 800);
+        window.addEventListener("load", report);
+      })();
+    </script>
+  </body>
+</html>
