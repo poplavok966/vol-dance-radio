@@ -1,0 +1,36 @@
+{
+  "url": "http://127.0.0.1:8080/",
+  "viewports": {
+    "desktop": {
+      "width": 1280,
+      "height": 800,
+      "status": 200,
+      "title": "VOL DANCE — Твоя танцювальна хвиля",
+      "hasCanvas": false,
+      "bodyTextLen": 2498,
+      "bodyTextHash": "119fef8aa633b291752a3ffd957f6d6449ef2129d45caa630a53f5363d476143",
+      "bodyTextPrefix": "VOL DANCE LIVE · 24/7 ЕФІР ІСТОРІЯ РЕЗИДЕНТИ ЧАТ Україна 23:23:3",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview.png"
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "status": 200,
+      "title": "VOL DANCE — Твоя танцювальна хвиля",
+      "hasCanvas": false,
+      "bodyTextLen": 2422,
+      "bodyTextHash": "8f0e1eb42536b17778eb804943152a26b081b14638fb9a89dd77fb63c90b4ee0",
+      "bodyTextPrefix": "VOL DANCE UA EN LIVE-ПОТІК ГОТОВИЙ ТВОЯ ТАНЦЮВАЛЬНА ХВИЛЯ VOL DA",
+      "horizontalOverflow": false,
+      "consoleErrors": [],
+      "pageErrors": [],
+      "screenshot": "/workspace/screenshots/app-builder-preview-mobile.png"
+    }
+  },
+  "brandWarnings": [],
+  "authWarnings": [],
+  "verdictFile": "/workspace/screenshots/app-builder-preview.json"
+}
